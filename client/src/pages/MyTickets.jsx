@@ -9,22 +9,38 @@ const MyTickets = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useContext(AuthContext);
 
+  const fetchBookings = async () => {
+    try {
+      const token = sessionStorage.getItem('token');
+      const res = await axios.get('http://localhost:5000/api/bookings/mybookings', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setBookings(res.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchBookings = async () => {
-      try {
-        const token = sessionStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/bookings/mybookings', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setBookings(res.data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchBookings();
   }, []);
+
+  const handleCancel = async (id) => {
+    if (!window.confirm('Are you sure you want to cancel this booking? This action cannot be undone.')) return;
+    try {
+      const token = sessionStorage.getItem('token');
+      await axios.put(`http://localhost:5000/api/bookings/${id}/cancel`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert('Booking cancelled successfully.');
+      fetchBookings(); // Refresh list
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || 'Error cancelling booking.');
+    }
+  };
 
   if (loading) return <div className="text-center mt-20 text-xl text-slate-500">Loading your tickets...</div>;
 
@@ -99,8 +115,11 @@ const MyTickets = () => {
                 <span className="text-xs font-mono text-slate-400 bg-white px-2 py-1 border border-slate-200 rounded">
                   {booking._id.slice(-8).toUpperCase()}
                 </span>
-                {booking.status === 'active' && (
-                  <button className="mt-4 text-xs font-bold text-slate-500 hover:text-red-600 uppercase tracking-wider transition-colors">
+                {booking.status === 'confirmed' && (
+                  <button 
+                    onClick={() => handleCancel(booking._id)}
+                    className="mt-4 text-xs font-bold text-slate-500 hover:text-red-600 uppercase tracking-wider transition-colors"
+                  >
                     Cancel
                   </button>
                 )}

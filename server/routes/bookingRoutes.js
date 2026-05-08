@@ -158,11 +158,20 @@ router.put('/:id/cancel', protect, async (req, res) => {
       return res.status(400).json({ message: 'Booking is already cancelled' });
     }
 
-    // Restore seats
+    // Restore seats in Event model
     const event = await Event.findById(booking.eventId);
     if (event) {
-      event.availableSeats += booking.tickets;
-      await event.save();
+      // 1. Atomically update the seats array to make them available again
+      await Event.updateOne(
+        { _id: event._id },
+        { 
+          $set: { 'seats.$[elem].status': 'available' },
+          $inc: { availableSeats: booking.tickets } 
+        },
+        { 
+          arrayFilters: [{ 'elem.seatNumber': { $in: booking.selectedSeats } }] 
+        }
+      );
     }
 
     booking.status = 'cancelled';
