@@ -129,15 +129,19 @@ router.get('/mybookings', protect, async (req, res) => {
   }
 });
 
-// Get bookings for an organizer's events
+// Get bookings for an organizer's events (or all for admin)
 router.get('/organizer', protect, restrictTo('organizer', 'admin'), async (req, res) => {
   try {
-    // Find all events created by the organizer
-    const events = await Event.find({ organizerId: req.user.id });
-    const eventIds = events.map(e => e._id);
+    let query = {};
+    if (req.user.role !== 'admin') {
+      // Find all events created by the organizer
+      const events = await Event.find({ organizerId: req.user.id });
+      const eventIds = events.map(e => e._id);
+      query = { eventId: { $in: eventIds } };
+    }
 
-    // Find all bookings for these events
-    const bookings = await Booking.find({ eventId: { $in: eventIds } }).populate('eventId').populate('userId', 'name email');
+    // Find all bookings matching the query
+    const bookings = await Booking.find(query).populate('eventId').populate('userId', 'name email');
     res.json(bookings);
   } catch (error) {
     res.status(500).json({ message: error.message });

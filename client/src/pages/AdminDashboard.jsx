@@ -6,8 +6,12 @@ import { Calendar, MapPin, Trash2, Users, Shield, CalendarDays, CheckCircle, XCi
 const AdminDashboard = () => {
   const [events, setEvents] = useState([]);
   const [usersList, setUsersList] = useState([]);
+  const [allBookings, setAllBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('events'); // 'events' or 'users'
+  const [showAttendeesModal, setShowAttendeesModal] = useState(false);
+  const [currentEventAttendees, setCurrentEventAttendees] = useState([]);
+  const [currentEventTitle, setCurrentEventTitle] = useState('');
   const { user } = useContext(AuthContext);
 
   const fetchAllEvents = async () => {
@@ -34,9 +38,21 @@ const AdminDashboard = () => {
     }
   };
 
+  const fetchAllBookings = async () => {
+    try {
+      const token = sessionStorage.getItem('token');
+      const res = await axios.get('http://localhost:5000/api/bookings/organizer', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setAllBookings(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const fetchData = async () => {
     setLoading(true);
-    await Promise.all([fetchAllEvents(), fetchAllUsers()]);
+    await Promise.all([fetchAllEvents(), fetchAllUsers(), fetchAllBookings()]);
     setLoading(false);
   };
 
@@ -96,6 +112,13 @@ const AdminDashboard = () => {
       console.error(err);
       alert('Error updating user role.');
     }
+  };
+
+  const handleViewAttendees = (eventId, eventTitle) => {
+    const attendees = allBookings.filter(b => b.eventId?._id === eventId);
+    setCurrentEventAttendees(attendees);
+    setCurrentEventTitle(eventTitle);
+    setShowAttendeesModal(true);
   };
 
   if (loading) return <div className="text-center mt-20 text-xl font-medium text-slate-500">Loading admin dashboard...</div>;
@@ -164,9 +187,12 @@ const AdminDashboard = () => {
                         }`}>
                           {event.status || 'pending'}
                         </span>
-                        <span className="text-xs font-semibold text-slate-400">
-                          Org ID: {event.organizerId?._id || event.organizerId}
-                        </span>
+                        <button 
+                          onClick={() => handleViewAttendees(event._id, event.title)}
+                          className="text-xs font-bold text-brand-600 hover:text-brand-800 flex items-center gap-1 transition-colors"
+                        >
+                          <Users className="w-4 h-4" /> View Bookings ({allBookings.filter(b => b.eventId?._id === event._id).length})
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -270,6 +296,41 @@ const AdminDashboard = () => {
         </div>
       )}
 
+      {/* Attendees Modal */}
+      {showAttendeesModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-white rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl animate-scale-up">
+            <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+              <h3 className="text-xl font-bold text-navy-900">Attendees: {currentEventTitle}</h3>
+              <button onClick={() => setShowAttendeesModal(false)} className="text-slate-400 hover:text-red-500 transition-colors">
+                <XCircle className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="p-6 max-h-[60vh] overflow-y-auto">
+              {currentEventAttendees.length === 0 ? (
+                <div className="text-center text-slate-500 py-8">No bookings yet for this event.</div>
+              ) : (
+                <div className="space-y-4">
+                  {currentEventAttendees.map(booking => (
+                    <div key={booking._id} className="flex justify-between items-center p-4 border border-slate-200 rounded-xl bg-slate-50">
+                      <div>
+                        <p className="font-bold text-navy-900">{booking.userId?.name || 'Unknown User'}</p>
+                        <p className="text-sm text-slate-500">{booking.userId?.email || 'N/A'}</p>
+                      </div>
+                      <div className="text-right">
+                        <span className="block font-bold text-brand-600">{booking.tickets} Tickets</span>
+                        <span className={`text-xs font-bold uppercase ${booking.status === 'cancelled' ? 'text-red-500' : 'text-green-500'}`}>
+                          {booking.status}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
