@@ -1,7 +1,5 @@
 # 🎟️ EventSphere - Online Event Booking & Management System
 
-![EventSphere Banner](https://via.placeholder.com/1200x400/0f172a/ffffff?text=EventSphere+-+Modern+Event+Ticketing+Platform)
-
 EventSphere is a premium, full-stack web application built to streamline the entire lifecycle of event management and ticket booking. Designed with a modern, dynamic, and fully responsive user interface, EventSphere provides distinct experiences for three types of users: Attendees, Organizers, and System Administrators.
 
 ---
