@@ -104,7 +104,7 @@ const OrganizerDashboard = () => {
           headers: { Authorization: `Bearer ${token}` }
         });
       } else {
-        await axios.post('http://${import.meta.env.VITE_API_URL}/api/events', formData, {
+        await axios.post(`http://${import.meta.env.VITE_API_URL}/api/events`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
       }

@@ -12,7 +12,7 @@ const MyTickets = () => {
   const fetchBookings = async () => {
     try {
       const token = sessionStorage.getItem('token');
-      const res = await axios.get('http://${import.meta.env.VITE_API_URL}/api/bookings/mybookings', {
+      const res = await axios.get(`http://${import.meta.env.VITE_API_URL}/api/bookings/mybookings`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setBookings(res.data);

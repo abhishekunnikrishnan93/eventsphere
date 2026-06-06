@@ -62,7 +62,7 @@ const EventDetails = () => {
       const token = sessionStorage.getItem('token');
       
       // Step 1: Temporarily Reserve Seats
-      await axios.post('http://${import.meta.env.VITE_API_URL}/api/bookings/reserve', {
+      await axios.post(`http://${import.meta.env.VITE_API_URL}/api/bookings/reserve`, {
         eventId: id,
         selectedSeats
       }, {
@@ -86,7 +86,7 @@ const EventDetails = () => {
     // Release seats back to available
     try {
       const token = sessionStorage.getItem('token');
-      await axios.post('http://${import.meta.env.VITE_API_URL}/api/bookings/release', {
+      await axios.post(`http://${import.meta.env.VITE_API_URL}/api/bookings/release`, {
         eventId: id,
         selectedSeats
       }, {
@@ -107,7 +107,7 @@ const EventDetails = () => {
       }
 
       // Finalize Booking
-      const res = await axios.post('http://${import.meta.env.VITE_API_URL}/api/bookings', {
+      const res = await axios.post(`http://${import.meta.env.VITE_API_URL}/api/bookings`, {
         eventId: id,
         tickets: selectedSeats.length,
         selectedSeats,

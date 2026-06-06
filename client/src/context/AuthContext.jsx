@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
       const token = sessionStorage.getItem('token');
       if (token) {
         try {
-          const res = await axios.get('http://${import.meta.env.VITE_API_URL}/api/auth/me', {
+          const res = await axios.get(`http://${import.meta.env.VITE_API_URL}/api/auth/me`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           setUser({ ...res.data, token });
@@ -27,13 +27,13 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    const res = await axios.post('http://${import.meta.env.VITE_API_URL}/api/auth/login', { email, password });
+    const res = await axios.post(`http://${import.meta.env.VITE_API_URL}/api/auth/login`, { email, password });
     sessionStorage.setItem('token', res.data.token);
     setUser(res.data);
   };
 
   const register = async (name, email, password, role) => {
-    const res = await axios.post('http://${import.meta.env.VITE_API_URL}/api/auth/register', { name, email, password, role });
+    const res = await axios.post(`http://${import.meta.env.VITE_API_URL}/api/auth/register`, { name, email, password, role });
     sessionStorage.setItem('token', res.data.token);
     setUser(res.data);
   };

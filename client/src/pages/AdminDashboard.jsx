@@ -17,7 +17,7 @@ const AdminDashboard = () => {
   const fetchAllEvents = async () => {
     try {
       const token = sessionStorage.getItem('token');
-      const res = await axios.get('http://${import.meta.env.VITE_API_URL}/api/events/admin/all', {
+      const res = await axios.get(`http://${import.meta.env.VITE_API_URL}/api/events/admin/all`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setEvents(res.data);
@@ -29,7 +29,7 @@ const AdminDashboard = () => {
   const fetchAllUsers = async () => {
     try {
       const token = sessionStorage.getItem('token');
-      const res = await axios.get('http://${import.meta.env.VITE_API_URL}/api/auth/users', {
+      const res = await axios.get(`http://${import.meta.env.VITE_API_URL}/api/auth/users`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUsersList(res.data);
@@ -41,7 +41,7 @@ const AdminDashboard = () => {
   const fetchAllBookings = async () => {
     try {
       const token = sessionStorage.getItem('token');
-      const res = await axios.get('http://${import.meta.env.VITE_API_URL}/api/bookings/organizer', {
+      const res = await axios.get(`http://${import.meta.env.VITE_API_URL}/api/bookings/organizer`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setAllBookings(res.data);
