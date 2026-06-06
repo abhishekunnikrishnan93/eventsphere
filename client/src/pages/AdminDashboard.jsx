@@ -17,7 +17,7 @@ const AdminDashboard = () => {
   const fetchAllEvents = async () => {
     try {
       const token = sessionStorage.getItem('token');
-      const res = await axios.get('http://localhost:5000/api/events/admin/all', {
+      const res = await axios.get('http://${import.meta.env.VITE_API_URL}/api/events/admin/all', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setEvents(res.data);
@@ -29,7 +29,7 @@ const AdminDashboard = () => {
   const fetchAllUsers = async () => {
     try {
       const token = sessionStorage.getItem('token');
-      const res = await axios.get('http://localhost:5000/api/auth/users', {
+      const res = await axios.get('http://${import.meta.env.VITE_API_URL}/api/auth/users', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUsersList(res.data);
@@ -41,7 +41,7 @@ const AdminDashboard = () => {
   const fetchAllBookings = async () => {
     try {
       const token = sessionStorage.getItem('token');
-      const res = await axios.get('http://localhost:5000/api/bookings/organizer', {
+      const res = await axios.get('http://${import.meta.env.VITE_API_URL}/api/bookings/organizer', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setAllBookings(res.data);
@@ -64,7 +64,7 @@ const AdminDashboard = () => {
     if (!window.confirm('Are you sure you want to permanently delete this event as an Admin?')) return;
     try {
       const token = sessionStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/events/${id}`, {
+      await axios.delete(`http://${import.meta.env.VITE_API_URL}/api/events/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setEvents(prevEvents => prevEvents.filter(ev => ev._id !== id));
@@ -77,7 +77,7 @@ const AdminDashboard = () => {
   const handleUpdateEventStatus = async (id, status) => {
     try {
       const token = sessionStorage.getItem('token');
-      const res = await axios.put(`http://localhost:5000/api/events/${id}/status`, { status }, {
+      const res = await axios.put(`http://${import.meta.env.VITE_API_URL}/api/events/${id}/status`, { status }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setEvents(prevEvents => prevEvents.map(ev => ev._id === id ? { ...ev, status: res.data.status } : ev));
@@ -91,7 +91,7 @@ const AdminDashboard = () => {
     if (!window.confirm('Are you sure you want to permanently delete this user? All their data will be lost.')) return;
     try {
       const token = sessionStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/auth/users/${id}`, {
+      await axios.delete(`http://${import.meta.env.VITE_API_URL}/api/auth/users/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchAllUsers();
@@ -104,7 +104,7 @@ const AdminDashboard = () => {
   const handleUpdateRole = async (id, newRole) => {
     try {
       const token = sessionStorage.getItem('token');
-      await axios.put(`http://localhost:5000/api/auth/users/${id}/role`, { role: newRole }, {
+      await axios.put(`http://${import.meta.env.VITE_API_URL}/api/auth/users/${id}/role`, { role: newRole }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchAllUsers();

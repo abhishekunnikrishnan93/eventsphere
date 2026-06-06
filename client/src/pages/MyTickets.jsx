@@ -12,7 +12,7 @@ const MyTickets = () => {
   const fetchBookings = async () => {
     try {
       const token = sessionStorage.getItem('token');
-      const res = await axios.get('http://localhost:5000/api/bookings/mybookings', {
+      const res = await axios.get('http://${import.meta.env.VITE_API_URL}/api/bookings/mybookings', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setBookings(res.data);
@@ -31,7 +31,7 @@ const MyTickets = () => {
     if (!window.confirm('Are you sure you want to cancel this booking? This action cannot be undone.')) return;
     try {
       const token = sessionStorage.getItem('token');
-      await axios.put(`http://localhost:5000/api/bookings/${id}/cancel`, {}, {
+      await axios.put(`http://${import.meta.env.VITE_API_URL}/api/bookings/${id}/cancel`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       alert('Booking cancelled successfully.');

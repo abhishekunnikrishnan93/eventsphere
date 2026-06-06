@@ -33,8 +33,8 @@ const OrganizerDashboard = () => {
     try {
       const token = sessionStorage.getItem('token');
       const [eventsRes, bookingsRes] = await Promise.all([
-        axios.get(`http://localhost:5000/api/events/organizer/${user._id}`, { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get(`http://localhost:5000/api/bookings/organizer`, { headers: { Authorization: `Bearer ${token}` } })
+        axios.get(`http://${import.meta.env.VITE_API_URL}/api/events/organizer/${user._id}`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`http://${import.meta.env.VITE_API_URL}/api/bookings/organizer`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
       setEvents(eventsRes.data);
       setAllBookings(bookingsRes.data);
@@ -100,11 +100,11 @@ const OrganizerDashboard = () => {
     try {
       const token = sessionStorage.getItem('token');
       if (editingId) {
-        await axios.put(`http://localhost:5000/api/events/${editingId}`, formData, {
+        await axios.put(`http://${import.meta.env.VITE_API_URL}/api/events/${editingId}`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
       } else {
-        await axios.post('http://localhost:5000/api/events', formData, {
+        await axios.post('http://${import.meta.env.VITE_API_URL}/api/events', formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
       }
@@ -120,7 +120,7 @@ const OrganizerDashboard = () => {
     if (!window.confirm('Are you sure you want to delete this event?')) return;
     try {
       const token = sessionStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/events/${id}`, {
+      await axios.delete(`http://${import.meta.env.VITE_API_URL}/api/events/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchData();
